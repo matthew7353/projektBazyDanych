@@ -15,8 +15,6 @@ function App() {
 
     return (
         <>
-            {/* Warunkowe renderowanie: jeśli nie ma tokena, pokaż Login.
-          W przeciwnym razie pokaż Dashboard. */}
             {!token ? (
                 <Login onLogin={handleLoginSuccess} />
             ) : (
