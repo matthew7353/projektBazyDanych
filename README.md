@@ -1,6 +1,6 @@
 # Jak ustawić projekt w IntelliJ
 
-* W zakładce *files* wybrać `new -> Projekt from version control...`.
+* W zakładce `files` wybrać `new -> Projekt from version control...` lub wybrać opcję `Clone repository` w przeglądarce projektów.
 * Wkleić URL repozytorium lub wybrać repozytorium spośród proponowanych.
 * Po pobraniu repozytorium wpisać w terminalu instrukcję `npm install` w celu zainstalowania potrzebnych bibliotek.
 * Następnie na górnym pasku rozwinąć opcję *Current file* i wybrać *Edit Configurations*.
