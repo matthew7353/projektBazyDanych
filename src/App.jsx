@@ -1,26 +1,58 @@
 import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
-function App() {
-    const [token, setToken] = useState(null);
+// 1. Komponent "Strażnik" (ProtectedRoute)
+// Sprawdza czy użytkownik jest zalogowany. Jeśli nie - odsyła do /login
+const ProtectedRoute = ({ isAllowed, redirectPath = '/login' }) => {
+    if (!isAllowed) {
+        return <Navigate to={redirectPath} replace />;
+    }
+    return <Outlet />; // Outlet to miejsce, gdzie renderują się podstrony (np. Dashboard)
+};
 
-    const handleLoginSuccess = (receivedToken) => {
-        setToken(receivedToken);
+function App() {
+    const [user, setUser] = useState(null); // Tutaj trzymamy info o sesji { token, role }
+
+    const handleLoginSuccess = (token) => {
+        setUser({ token, role: 'admin' });
     };
 
     const handleLogout = () => {
-        setToken(null);
+        setUser(null);
     };
 
     return (
-        <>
-            {!token ? (
-                <Login onLogin={handleLoginSuccess} />
-            ) : (
-                <Dashboard onLogout={handleLogout} />
-            )}
-        </>
+        <BrowserRouter>
+            <Routes>
+                {/* TRASA PUBLICZNA */}
+                <Route
+                    path="/login"
+                    element={
+                        !user ? (
+                            <Login onLogin={handleLoginSuccess} />
+                        ) : (
+                            <Navigate to="/admin" replace />
+                        )
+                    }
+                />
+
+                {/* TRASY CHRONIONE DLA ADMINA */}
+                <Route element={<ProtectedRoute isAllowed={!!user && user.role === 'admin'} />}>
+                    <Route
+                        path="/admin/*"
+                        element={<Dashboard onLogout={handleLogout} />}
+                    />
+                </Route>
+
+                {/* AUTOMATYCZNE PRZEKIEROWANIE */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+
+                {/* Obsługa błędnych adresów (404) */}
+                <Route path="*" element={<div className="text-white p-10">404 - Strona nie istnieje</div>} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
